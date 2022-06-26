@@ -18,12 +18,52 @@ module.exports = () => {
       path: path.resolve(__dirname, 'dist'),
     },
     plugins: [
+      new HtmlWebpackPlugin({
+        template: './index.html',
+        title: 'jate'
+      }),
+      new MiniCssExtractPlugin(),
+      new InjectManifest({
+        swSrc: './src-sw.js',
+        swDest: 'src-sw.js',
+      }),
+      new WebpackPwaManifest({
+        short_name: 'Manifest',
+        name: "Jate manifest",
+        icons: [{
+          src: path.resolve('src/images/logo.png'),
+          sizes: [96, 128, 192, 256, 384, 512],
+          destination: path.join('assets', 'icons'),
+          type: "image/png",
+        }],
+        orientation: "portrait",
+        display: "standalone",
+        start_url: "./",
+        publicPath: './',
+        description: "Edit Code",
+        background_color: '#7eb4e2',
+        theme_color: "#7eb4e2"
+      })
       
     ],
 
     module: {
       rules: [
-        
+        {
+          test: /\.css$/i,
+          use: [ MiniCssExtractPlugin.loader, 'css-loader'],
+        },
+        {
+          test: /\.m?js$/,
+          exclude: /node_modules/,
+          use: {
+            loader: 'babel-loader',
+            options: {
+              presets: ['@babel/preset-env'],
+              plugins: ['@babel/plugin-proposal-object-rest-spread', '@babel/transform-runtime'],
+            },
+          },
+        },
       ],
     },
   };
